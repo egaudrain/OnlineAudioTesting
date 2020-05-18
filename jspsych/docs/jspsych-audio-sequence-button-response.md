@@ -32,7 +32,7 @@ i_correct       | numeric          | null          | The index of the choice tha
 
 ## Data Generated
 
-In addition to the [default data collected by all plugins](overview#datacollectedbyplugins), this plugin collects the following data for each trial.
+In addition to the [default data collected by all plugins](https://www.jspsych.org/plugins/overview/#data-collected-by-plugins), this plugin collects the following data for each trial.
 
 Name | Type | Value
 -----|------|------
@@ -66,7 +66,7 @@ correct, incorrect                         | One of these classes is given to th
 This plugin relies on [jQuery](https://jquery.com/). Note that this is not absolutely necessary, but it makes some things fail silently instead of raising errors. If you need this plugin without jQuery, you can easily
 replace the jQuery syntax with standard Javascript DOM manipulation.
 
-The animation of the visual feedback can make use of [Semantic UI's transitions](https://semantic-ui.com/modules/transition.html). But if that's not available a simpler blink animation is implemented here.
+The animation of the visual feedback can make use of [Semantic UI's transitions](https://semantic-ui.com/modules/transition.html) ('bounce' for correct, 'shake' for incorrect). But if it's not available a simpler blink animation is implemented within this plugin.
 
 ## Example
 

@@ -1,0 +1,9 @@
+{
+    "host": "127.0.0.1",
+    "port": 1996,
+    "logfile": "/var/log/vt_server.log",
+    "cachefolder": "/var/cache/vt_server",
+    "cacheformat": "flac",
+    "cacheformatoptions": {},
+    "lame": "/usr/bin/lame"
+}

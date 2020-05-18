@@ -88,7 +88,7 @@ jsPsych.plugins["audio-sequence-button-response"] = (function() {
             visual_feedback: {
                 type: jsPsych.plugins.parameterType.BOOL,
                 pretty_name: 'Visual feedback',
-                default: null,
+                default: false,
                 description: 'If true, then visual feedback will be provided after the trial ends.'
             },
             i_correct: {

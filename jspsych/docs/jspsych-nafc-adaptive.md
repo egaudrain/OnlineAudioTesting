@@ -23,15 +23,18 @@ approaches. To benefit from the adaptiveness of the method, it is better to use 
 large, and then refine it when we get close to threshold. The method proposed here packs mechanisms
 to do so.
 
+A progress bar is shown per run. The progress is updated using the number of turn-points.
+
 ## Usage
 
-To use it you'll need the following jsPsych dependencies included in your webpage:
+To use it you'll need the following jsPsych dependencies included in your webpage (after adapting the path to wherever your Javascript files are):
 
 ```html
 <script src="/js/vendor/jspsych.js"></script>
 <script src="/js/vendor/jspsych-plugins/jspsych-instructions.js"></script>
 <script src="/js/vendor/jspsych-plugins/jspsych-waitfor-function.js"></script>
 <script src="/js/vendor/jspsych-plugins/jspsych-audio-sequence-button-response.js"></script>
+<script src="/js/jspsych-nafc-adaptive.js"></script>
 ```
 
 The latter is not an official jsPsych plugin, but can be found [here](../plugins/jspsych-audio-sequence-button-response.js).
@@ -144,7 +147,7 @@ It receives the following arguments:
     }
     ```
 
-    You can use these to construct the next trial.
+    You can use these to construct the next trial. On the first trial, `last_trial` is `undefined`.
 
 *   `step`: This is the current, computed value for the trial we're preparing. That is, step size modifications have been applied and the sign determines whether we're going up or down.
     You can compute the new value of the difference with: `var diff = options.current_difference + step;`. The reason we don't pass on the difference is because there may be reasons to alter the
@@ -186,3 +189,149 @@ Here are the arguments:
 *   `data`: This is a jsPsych [DataCollection](https://www.jspsych.org/core_library/jspsych-data/#datacollection) object containing the trials of the run. At the end of the run, a new row is added with `type: 'threshold'`, containing the threshold information.
 
 *   `success_cb`: You have to call this callback once you're done. It takes no argument (or optionally some data you might want to add to the jsPsych experiment data). If the function is synchronous, just call it at the end of your function. If it runs asynchronously, pass the callback to your async function.
+
+## Example
+
+Here's a simplified example with some pseudo code so that you get an idea of how to implement this experiment. This is the code of the whole HTML file:
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <title>Adaptive nAFC</title>
+
+    <link rel="stylesheet" href="/css/semantic.css">
+    <script src="/css/semantic.js"></script>
+
+    <link rel="stylesheet" href="/css/jspsych.css">
+
+    <script src="/js/vendor/jquery.js"></script>
+    <script src="/js/vendor/jspsych.js"></script>
+    <script src="/js/vendor/jspsych-plugins/jspsych-instructions.js"></script>
+    <script src="/js/vendor/jspsych-plugins/jspsych-waitfor-function.js"></script>
+    <script src="/js/vendor/jspsych-plugins/jspsych-html-button-response.js"></script>
+    <script src="/js/vendor/jspsych-plugins/jspsych-audio-sequence-button-response.js"></script>
+    <script src="/js/jspsych-nafc-adaptive.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="jspsych-target"></div>
+    <script>
+    function show_error_nAFC(msg){
+        $('#jspsych-target').append("<div class='ui error message'>"+msg+"</div>");
+    }
+
+    function send_nAFC_data(options, condition, data, success_cb)
+    {
+        var dat = {
+            exp_id: EXP_ID,
+            subject_id: SUBJECT_ID,
+            to: 'trial',
+            trial_id: TRIAL_ID+'/'+condition,
+            trial: data.values(),
+            response: jsPsych.data.get().filter({type: 'threshold'}).last().values()[0],
+        };
+        $.post({
+            url: "myserver.org/ajax/data-handler.php",
+            data: dat,
+            success: success_cb,
+            error: function(jqXHR, textStatus, errorThrown) {
+                show_error_nAFC(errorThrown);
+            }
+        });
+    }
+
+    function prepare_trial(last_trial, step, options, condition, done){
+
+        // If this is the first time, `last_trial` will be undefined
+
+        var diff = options.current_difference + step;
+
+        // We can get some random stuff and access our custom options (see below)
+        var syllables = jsPsych.randomization.sampleWithoutReplacement(options.syllables, 3);
+
+        // We pre-allocate `new_trial`
+        var new_trial = {
+            stimuli: null,
+            i_correct: getRandomIntInclusive(0,options.intervals.length-1),
+            trial_definition: {
+                dim: diff,
+                condition: condition,
+                stimuli: syllables
+            }, // The parameters that define the trial
+            step: step, // Just in case we modified the provided step
+            difference: diff
+        };
+
+        // We need to prepare N stimuli, where one is the odd-one-out,
+        // based on diff. This can be done server side, with a callback.
+        $.post({
+            url: "myserver.org/prepare_stimuli.php",
+            data: new_trial,
+            success: function(dat) {
+                var files = JSON.parse(dat); // Assuming we're getting a list of files from server
+                new_trial.stimuli = files;
+                // We call 'done' to start the trial.
+                done(new_trial);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                show_error_nAFC(errorThrown);
+            }
+        });
+    }
+
+    var options = {
+        initial_step_size: 2,
+        starting_difference: 12,
+        step_size_modifier: 1/Math.sqrt(2),
+        down_up: [2, 1], // 2-down, 1-up => 70.7%
+        terminate_on_nturns: 8,
+        terminate_on_ntrials: 150,
+        terminate_on_max_difference: 25,
+        threshold_on_last_nturns: 6,
+        change_step_size_on_difference: 2,
+        change_step_size_on_ntrials: 15,
+        intervals: ['1', '2', '3'],
+        prepare_trial: prepare_trial,
+        after_the_run: send_nAFC_data, // function(data, success_cb())
+        start_button: 'Start',
+        prompt: "Which of the three is different from the two others?",
+        opening_message: "<h1>Test</h1><p>You will hear three sounds. Choose the one that is different from the two others.</p>",
+        closing_message: "<h1>Thank you!</h1><p>This is the end of this block. Thank you for your help!</p>",
+        isi: 500, // Note that the original experiment had more like 600ms
+        visual_feedback: true,
+
+        /* ------- Our custom options ------- */
+        sound_folder: 'CV/nl_nl',
+        sound_format: 'wav',
+        syllables: ["su", "si+", "po", "l@", "sa", "r3", "di", "f3", "ra", "t@", "pi", "ni+"]
+    };
+
+    // We do this to defer to when the document is ready
+    $(function(){
+
+        var main_timeline = [];
+        var conditions = ['A', 'B', 'C'];
+
+        // We create a run for each condition
+        for(c of conditions)
+        {
+            main_timeline.push( nAFC_adapt(options, c) );
+        }
+
+        // You can add other trials before or after the adaptive runs, here.
+
+        jsPsych.init({
+            timeline: main_timeline,
+            display_element: 'jspsych-target',
+            show_progress_bar: true,
+            auto_update_progress_bar: false,
+        });
+    });
+    </script>
+  </body>
+</html>
+```

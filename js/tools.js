@@ -1,5 +1,8 @@
 /*------------------------------------------------------------------------------
  * Various tools for experiments
+ *------------------------------------------------------------------------------
+ * Requires jQuery, Semantic UI modal and icon, and the dbsplab.fun DataHandler
+ * (only to check if the sound level adjustment has been done already).
  *----------------------------------------------------------------------------*/
 
 function is_browser_compatible(){

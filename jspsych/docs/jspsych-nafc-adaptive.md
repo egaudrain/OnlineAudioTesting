@@ -34,10 +34,15 @@ To use it you'll need the following jsPsych dependencies included in your webpag
 <script src="/js/vendor/jspsych-plugins/jspsych-instructions.js"></script>
 <script src="/js/vendor/jspsych-plugins/jspsych-waitfor-function.js"></script>
 <script src="/js/vendor/jspsych-plugins/jspsych-audio-sequence-button-response.js"></script>
+<script src="/js/tools.js"></script>
 <script src="/js/jspsych-nafc-adaptive.js"></script>
 ```
 
-The latter is not an official jsPsych plugin, but can be found [here](../plugins/jspsych-audio-sequence-button-response.js).
+* `jspsych-audio-sequence-button-response.js` can be found [here](../plugins/jspsych-audio-sequence-button-response.js).
+* `jspsych-waitfor-response.js` can be found [here](../plugins/jspsych-waitfor-response.js).
+* `tools.js` can be found [here](../../js/tools.js).
+
+`tools.js` defines new functions to `Array.prototype` to help some calculations of the threshold.
 
 The module defines a single function called `nAFC_adapt` that generates a timeline. It is then used like
 this in a `<script>` markup:
@@ -190,6 +195,24 @@ Here are the arguments:
 
 *   `success_cb`: You have to call this callback once you're done. It takes no argument (or optionally some data you might want to add to the jsPsych experiment data). If the function is synchronous, just call it at the end of your function. If it runs asynchronously, pass the callback to your async function.
 
+## Data
+
+When a run is finished, the following data row is added to the jsPsych data collection:
+
+```javascript
+{
+    type: 'threshold',
+    threshold: thr, // this is the arithmetic mean of the turn-points, or NaN
+    geom_threshold: geom_thr, // this is the geometric mean of the turn-points, or NaN
+    reason: 'nturns', // the reason why the run ended, can be 'ntrials', 'max_difference'
+    steps: steps, // the list of steps
+    differences: differences, // the list of differences
+    condition: condition, // the condition label
+    corrects: corrects, // the list of responses
+    internal_node_id: data.last().select('internal_node_id').values[0] // The internal_node_id, this can be removed before transmission to server.
+}
+```
+
 ## Example
 
 Here's a simplified example with some pseudo code so that you get an idea of how to implement this experiment. This is the code of the whole HTML file:
@@ -214,6 +237,7 @@ Here's a simplified example with some pseudo code so that you get an idea of how
     <script src="/js/vendor/jspsych-plugins/jspsych-html-button-response.js"></script>
     <script src="/js/vendor/jspsych-plugins/jspsych-audio-sequence-button-response.js"></script>
     <script src="/js/jspsych-nafc-adaptive.js"></script>
+    <script src="/js/tools.js"></script>
 
     <link rel="stylesheet" href="style.css">
   </head>

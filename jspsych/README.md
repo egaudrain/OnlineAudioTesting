@@ -2,5 +2,6 @@
 
 We've implemented some generic methods for audio testing with jsPsych:
 
-* A plugin to do alternative forced choice with sounds: [jspsych-audio-sequence-button-response](docs/jspsych-audio-sequence-button-response.md)
-* A function that generates timelines for adaptive testing using a nAFC interface: [jspsych-nafc-adaptive](docs/jspsych-nafc-adaptive.md)
+* A plugin to do alternative forced choice with sounds: [jspsych-audio-sequence-button-response](docs/jspsych-audio-sequence-button-response.md).
+* A plugin to do display a loading spinner while waiting for a (possible async) function to complete: [jspsych-waitfor-response](docs/jspsych-waitfor-response.md).
+* A function that generates timelines for adaptive testing using a nAFC interface: [jspsych-nafc-adaptive](docs/jspsych-nafc-adaptive.md).

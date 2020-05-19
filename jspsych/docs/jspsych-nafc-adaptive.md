@@ -30,7 +30,7 @@ To use it you'll need the following jsPsych dependencies included in your webpag
 ```html
 <script src="/js/vendor/jspsych.js"></script>
 <script src="/js/vendor/jspsych-plugins/jspsych-instructions.js"></script>
-<script src="/js/vendor/jspsych-plugins/jspsych-call-function.js"></script>
+<script src="/js/vendor/jspsych-plugins/jspsych-waitfor-function.js"></script>
 <script src="/js/vendor/jspsych-plugins/jspsych-audio-sequence-button-response.js"></script>
 ```
 

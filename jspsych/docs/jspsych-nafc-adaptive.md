@@ -163,6 +163,8 @@ It receives the following arguments:
     - `step`: The step used to create the new trial.
     - `difference`: The difference used to create the new trial. This is used to update `options.current_difference`.
 
+    You have to prepare this object in your `prepare_trial` function and pass it to `done_cb` when you're done.
+
 This callback is executed as the main function in a (`jspsych-waitfor-function`)[jspsych-waitfor-function.md] trial. That means a loader will be displayed on the page (for at least 1 s) while this is running.
 
 ### `after_the_run()`

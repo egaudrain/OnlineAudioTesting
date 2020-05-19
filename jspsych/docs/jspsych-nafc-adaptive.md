@@ -4,7 +4,7 @@ This is not a jsPsych plugin, but instead a module that generates a timeline for
 tracking of a threshold using an odd-one-out task (nAFC).
 
 An adaptive method is a method where each new set of stimuli in a trial is based on the
-previous response(s). (Levitt (1971))[https://doi.org/10.1121/1.1912375] has described these
+previous response(s). [Levitt (1971)](https://doi.org/10.1121/1.1912375) has described these
 methods for auditory stimuli. In the case of a discrimination task, the difference between
 a reference and test stimuli decreases progressively to reach a certain point of the psychometric
 function. Rules to go up and down, i.e. increase or decrease the physical distance between

@@ -74,7 +74,7 @@ CSS selectors                              | Description
 `table.jspsych-crm td`                     | The cells of the grid.
 `.visual-feedback`                         | This class is given to the button that represents the correct option, *after* the subject has given their answer.
 `.correct`, `.incorrect`                   | One of these classes is given to the button that represents the correct option, depending on whether the subject's answer was correct or incorrect.
-`.crm-`*%color%*                           | Each element displayed in a color receives a class which is constructed from the name of the color.
+`.crm-`*{color}*                           | Each element displayed in a color receives a class which is constructed from the name of the color.
 
 ## Dependencies
 

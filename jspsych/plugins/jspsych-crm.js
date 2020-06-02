@@ -25,7 +25,13 @@ jsPsych.plugins["crm"] = (function() {
                 pretty_name: 'Colors',
                 default: undefined,
                 array: true,
-                description: 'The labels of the colors used in the task.'
+                description: 'The colors used in the task.'
+            },
+            color_labels: {
+                type: jsPsych.plugins.parameterType.OBJECT,
+                pretty_name: 'Color labels',
+                default: null,
+                description: 'The labels of the colors used in the task (for instance in another language).'
             },
             color_values: {
                 type: jsPsych.plugins.parameterType.OBJECT,
@@ -95,28 +101,35 @@ jsPsych.plugins["crm"] = (function() {
             trial.color_values = {
                 red: "#ff3333",
                 blue: "#6b6bff",
-                green: "#80ee59",
+                green: "#1da831",
                 yellow: "#ffe534",
                 pink: "#ff57df",
                 purple: "#a522ff",
                 brown: "#7a5630",
-                black: "#22222",
+                black: "#222222",
                 white: "#fcfcfc",
                 grey: "#8c8c8c",
                 gray: "#8c8c8c"
             };
         }
 
-        if(trial.text_color_values=="auto") {
-            trial.text_color_values = {};
-            for(var c in trial.color_values) {
-                var col = parseCSSColor(c);
-                var L = 0.299*col[0] + 0.587*col[1] + 0.114*col[2];
-                if(L<128)
-                    trial.text_color_values[c] = "#ffffff";
-                else
-                    trial.text_color_values[c] = "#000000";
+
+        var auto_text_color_values = {};
+        var brightness = {};
+        for(var c in trial.color_values) {
+            var col = parseCSSColor(c);
+            var L = 0.299*col[0] + 0.587*col[1] + 0.114*col[2];
+            if(L<128) {
+                brightness[c] = 'dark';
+                auto_text_color_values[c] = "#ffffff";
+            } else {
+                auto_text_color_values[c] = "#000000";
+                brightness[c] = 'bright';
             }
+        }
+
+        if(trial.text_color_values=="auto") {
+            trial.text_color_values = auto_text_color_values;
         }
 
 
@@ -150,6 +163,13 @@ jsPsych.plugins["crm"] = (function() {
             }
         }
 
+        if(trial.color_labels===null) {
+            trial.color_labels = {};
+            for(var c of trial.colors) {
+                trial.color_labels[c] = c;
+            }
+        }
+
         /*
         //display buttons
         if(Array.isArray(trial.button_html)) {
@@ -175,11 +195,11 @@ jsPsych.plugins["crm"] = (function() {
         html += '<div id="jspsych-crm-buttons-container"><table class="jspsych-crm">';
         for(var c of trial.colors) {
             html += "<tr>";
-            html += "<th class='crm-"+c+"' style='color: "+trial.color_values[c]+"'>"+c+"</th>";
+            html += "<th class='crm-"+c+"' style='color: "+trial.color_values[c]+"'>"+trial.color_labels[c]+"</th>";
             for(var n of trial.numbers) {
-                html += "<td class='crm-"+c+"' data-value='"+JSON.stringify({color: c, number: n})+"' style='color: "+trial.text_color_values[c]+"; background-color: "+trial.color_values[c]+"'>"+n+"</td>";
+                html += "<td class='crm-"+c+" "+brightness[c]+"' data-value='"+JSON.stringify({color: c, number: n})+"' style='color: "+trial.text_color_values[c]+"; background-color: "+trial.color_values[c]+"'>"+n+"</td>";
             }
-            html += "<th class='crm-"+c+"' style='color: "+trial.color_values[c]+"'>"+c+"</th>";
+            html += "<th class='crm-"+c+"' style='color: "+trial.color_values[c]+"'>"+trial.color_labels[c]+"</th>";
             html += "</tr>";
         }
         html += '</div>';
@@ -187,14 +207,14 @@ jsPsych.plugins["crm"] = (function() {
         $(display_element).html( html );
 
         function enable_response() {
-            $(dispay_element).find("table.jspsych-crm td").css("cursor", "pointer").click( function(e) {
+            $(display_element).find("table.jspsych-crm td").css("cursor", "pointer").click( function(e) {
                 var choice = JSON.parse(e.currentTarget.getAttribute('data-value'));
                 after_response(choice);
             });
         }
 
         function disable_response() {
-            $(dispay_element).find("table.jspsych-crm td").off("click").css("cursor", "default");
+            $(display_element).find("table.jspsych-crm td").off("click").css("cursor", "default");
         }
 
         // store response
@@ -291,9 +311,9 @@ jsPsych.plugins["crm"] = (function() {
                 stimulus: trial.stimulus,
                 response_color: response.color,
                 response_number: response.number,
-                correct_color: trial.correct.color,
-                correct_number: trial.correct.number,
-                score: (response.color==trial.correct.color) + (response.number==trial.correct.number)
+                correct_color: trial.correct_response.color,
+                correct_number: trial.correct_response.number,
+                score: (response.color==trial.correct_response.color) + (response.number==trial.correct_response.number)
             };
 
             // clear the display

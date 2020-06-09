@@ -224,7 +224,7 @@ if(!Array.prototype.min){
         return this.reduce(function(m,v){ return (v<m)?v:m; }, +Infinity);
     };
 } else {
-    console.log("Array.prototype.min already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.min already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.max){
@@ -234,7 +234,7 @@ if(!Array.prototype.max){
         return this.reduce(function(m,v){ return (v>m)?v:m; }, -Infinity);
     };
 } else {
-    console.log("Array.prototype.max already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.max already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.diff){
@@ -246,7 +246,7 @@ if(!Array.prototype.diff){
             return a;
     };
 } else {
-    console.log("Array.prototype.diff already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.diff already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.sum){
@@ -256,7 +256,7 @@ if(!Array.prototype.sum){
         }, 0);
     };
 } else {
-    console.log("Array.prototype.sum already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.sum already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.mean){
@@ -264,7 +264,7 @@ if(!Array.prototype.mean){
         return this.sum() / this.length;
     };
 } else {
-    console.log("Array.prototype.mean already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.mean already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.findIndices){
@@ -277,7 +277,7 @@ if(!Array.prototype.findIndices){
         }, []);
     };
 } else {
-    console.log("Array.prototype.findIndices already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.findIndices already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.select){
@@ -289,7 +289,7 @@ if(!Array.prototype.select){
         return a;
     };
 } else {
-    console.log("Array.prototype.select already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.select already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.non_zero){
@@ -297,7 +297,7 @@ if(!Array.prototype.non_zero){
         return this.filter(function(x) { return x != 0; });
     };
 } else {
-    console.log("Array.prototype.non_zero already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.non_zero already exists! Its definition may not correspond to what was intended.");
 }
 
 if(!Array.prototype.frequencies){
@@ -313,5 +313,32 @@ if(!Array.prototype.frequencies){
         }, {});
     };
 } else {
-    console.log("Array.prototype.frequencies already exists! Its definition may not correspond to what was intended.");
+    console.warn("Array.prototype.frequencies already exists! Its definition may not correspond to what was intended.");
+}
+
+if(!Array.range) {
+    Array.range = function(arg1, arg2=null, step = 1) {
+        if(arg2===null) {
+            start = 0;
+            stop = arg1;
+        } else {
+            start = arg1;
+            stop = arg2;
+        }
+        return Array(Math.ceil((stop - start) / step)).fill(start).map((x, y) => x + y * step);
+    }
+} else {
+    console.warn("Array.range already exists! Its definition may not correspond to what was intended.");
+}
+
+if(!Array.prototype.keys){
+    Array.prototype.keys = function() {
+        // Not an iterator, but good enough
+        return Array.range(this.length);
+    };
+}
+
+if(!console) {
+    console.log = function(){};
+    console.warn = function(){};
 }

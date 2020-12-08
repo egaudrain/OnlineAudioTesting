@@ -4,6 +4,8 @@
  * This template requires the jspsych-audio-sequence-button-response plugin.
  *------------------------------------------------------------------------------
  * Author: Etienne Gaudrain <etienne.gaudrain@cnrs.fr>
+ * 2020-05-19: Fixed some typos
+ * 2020-12-08: Fixed threshold calculation
  *----------------------------------------------------------------------------*/
 
 /* To use, you need to include the following in your webpage:
@@ -125,7 +127,7 @@ function nAFC_adapt(opts, condition) {
             else if(options.current_difference <= options.current_step_size * options.change_step_size_on_difference ||
                 options.change_step_size_on_ntrials_counter == options.change_step_size_on_ntrials) {
                 options.current_step_size = options.current_step_size * options.step_size_modifier;
-                options.change_step_size_on_ntrials_counter = 0
+                options.change_step_size_on_ntrials_counter = 0;
             }
 
             step = -options.current_step_size;
@@ -142,7 +144,7 @@ function nAFC_adapt(opts, condition) {
             if(options.current_difference <= options.current_step_size * options.change_step_size_on_difference ||
                 options.change_step_size_on_ntrials_counter == options.change_step_size_on_ntrials) {
                 options.current_step_size = options.current_step_size * options.step_size_modifier;
-                options.change_step_size_on_ntrials_counter = 0
+                options.change_step_size_on_ntrials_counter = 0;
             }
 
             step = options.current_step_size;
@@ -156,8 +158,9 @@ function nAFC_adapt(opts, condition) {
             console.log("WE'RE GOIN' NOWHERE!");
         }
 
-        if(options.change_step_size_on_ntrials_counter == options.change_step_size_on_ntrials)
+        if(options.change_step_size_on_ntrials_counter == options.change_step_size_on_ntrials) {
             options.change_step_size_on_ntrials_counter = 0;
+        }
 
         return step;
     }
@@ -227,7 +230,11 @@ function nAFC_adapt(opts, condition) {
                 // That's a nice way of ending... Let's calculate the threshold
 
                 var i_nz = steps.findIndices(function(x) { return x != 0; });
-                var i_tp = i_nz.filter(function(x, i) { return snnsd[i] != 0; });
+                // EG: 2020-12-07, correcting stupid mistake
+                //var i_tp = i_nz.filter(function(x, i) { return snnsd[i] != 0; });
+                var i_d  = steps.non_zero().map(Math.sign).diff().findIndices(function(x) { return x != 0; });
+                var i_tp = i_nz.select(i_d);
+                // -- end edit 2020-12-07
                 i_tp.push(differences.length - 1);
                 i_tp = i_tp.slice(-options.threshold_on_last_nturns);
 

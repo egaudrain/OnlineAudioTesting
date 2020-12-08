@@ -56,9 +56,9 @@ SLADi18n['title']['fr'] = "Réglage du volume";
 SLADi18n['title']['en'] = "Sound level adjustment";
 SLADi18n['title']['nl'] = "Geluidsniveau";
 SLADi18n['intro'] = {};
-SLADi18n['intro']['fr'] = "Ajustez le volume de votre ordinateur de façon à ce que le son soit présenté à un niveau confortable.";
-SLADi18n['intro']['en'] = "Adjust the sound level on your computer so that the sound plays at a comfortable level.";
-SLADi18n['intro']['nl'] = "Pas het geluidsniveau op uw computer aan zodat het geluid op een comfortabel niveau wordt afgespeeld.";
+SLADi18n['intro']['fr'] = "Il est conseillé de completer cette expérience dans un <b>environnement calme</b>, et de préférence en utilisant un <b>casque de bonne qualité</b>. Ajustez le volume de votre ordinateur de façon à ce que le son soit présenté à un niveau confortable, et gardez le volume identique pendant toute la durée de l'expérience.";
+SLADi18n['intro']['en'] = "You are kindly asked to perform this experiment in a <b>calm environment</b>, and preferably using <b>good quality headphones</b>. Adjust the sound level on your computer so that the sound plays at a comfortable level, and keep the volume the same during the whole experiment.";
+SLADi18n['intro']['nl'] = "U wordt vriendelijk verzocht om dit experiment in een <b>stille omgeving</b> uit te voeren en bij voorkeur een <b>koptelefoon van goede kwaliteit</b> te gebruiken. Pas het geluidsniveau op uw computer aan zodat het geluid op een comfortabel niveau wordt afgespeeld, en verander het geluidsniveau verder niet meer gedurende het experiment.";
 SLADi18n['loading'] = {};
 SLADi18n['loading']['fr'] = "Chargement...";
 SLADi18n['loading']['en'] = "Loading...";
@@ -336,6 +336,14 @@ if(!Array.prototype.keys){
         // Not an iterator, but good enough
         return Array.range(this.length);
     };
+}
+
+function stringToIntArray(s){
+    var a = new Array();
+    for(var i=0; i<s.length; i++){
+        a.push(s.charCodeAt(i));
+    }
+    return a;
 }
 
 if(!console) {

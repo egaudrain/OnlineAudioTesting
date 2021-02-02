@@ -8,6 +8,11 @@
  *
  * See https://github.com/jspsych/jsPsych/issues/1445.
  *
+ * NOTE: When not using the WebAudio API (jsPsych initialised with `use_webaudio=false`),
+ * jspsych.js needs to be modifed to expose the list of preloaded sounds (or, it seems,
+ * at least the first one). In the code below, this is done within
+ * `jsPsych.pluginAPI.preloaded_audio_IDs()`.
+ *
  **/
 
 jsPsych.plugins["audio-safari-init"] = (function() {

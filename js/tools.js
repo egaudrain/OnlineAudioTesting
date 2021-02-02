@@ -9,6 +9,12 @@ function is_browser_compatible(){
     // Add here everything that needs to be tested for browser compatibility
     if( (new Audio()).canPlayType('audio/mp3') != 'probably' )
         return false;
+
+    /*
+    if( (new Audio()).canPlayType('audio/mpeg') != 'probably' )
+        return false;
+    */
+
     /*
     if( (new Audio()).canPlayType('audio/wav') != 'probably' )
         return false;
@@ -54,11 +60,11 @@ var SLADi18n = {};
 SLADi18n['title'] = {};
 SLADi18n['title']['fr'] = "Réglage du volume";
 SLADi18n['title']['en'] = "Sound level adjustment";
-SLADi18n['title']['nl'] = "Geluidsniveau";
+SLADi18n['title']['nl'] = "Geluidsvolume";
 SLADi18n['intro'] = {};
 SLADi18n['intro']['fr'] = "Il est conseillé de completer cette expérience dans un <b>environnement calme</b>, et de préférence en utilisant un <b>casque de bonne qualité</b>. Ajustez le volume de votre ordinateur de façon à ce que le son soit présenté à un niveau confortable, et gardez le volume identique pendant toute la durée de l'expérience.";
 SLADi18n['intro']['en'] = "You are kindly asked to perform this experiment in a <b>calm environment</b>, and preferably using <b>good quality headphones</b>. Adjust the sound level on your computer so that the sound plays at a comfortable level, and keep the volume the same during the whole experiment.";
-SLADi18n['intro']['nl'] = "U wordt vriendelijk verzocht om dit experiment in een <b>stille omgeving</b> uit te voeren en bij voorkeur een <b>koptelefoon van goede kwaliteit</b> te gebruiken. Pas het geluidsniveau op uw computer aan zodat het geluid op een comfortabel niveau wordt afgespeeld, en verander het geluidsniveau verder niet meer gedurende het experiment.";
+SLADi18n['intro']['nl'] = "U wordt vriendelijk verzocht om dit experiment in een <b>stille omgeving</b> uit te voeren en bij voorkeur een <b>koptelefoon van goede kwaliteit</b> te gebruiken. Pas het geluidsvolume op uw computer aan zodat het geluid op een comfortabel niveau wordt afgespeeld, en verander het geluidsniveau verder niet meer gedurende het experiment.";
 SLADi18n['loading'] = {};
 SLADi18n['loading']['fr'] = "Chargement...";
 SLADi18n['loading']['en'] = "Loading...";
@@ -66,7 +72,7 @@ SLADi18n['loading']['nl'] = "Bezig met laden...";
 SLADi18n['when-ready'] = {};
 SLADi18n['when-ready']['fr'] = "Quand vous êtes prêt.e, cliquez sur \"Continuer\".";
 SLADi18n['when-ready']['en'] = "When you are ready, click on \"Continue\".";
-SLADi18n['when-ready']['nl'] = "Als je klaar bent, klik je op \"Doorgaan\".";
+SLADi18n['when-ready']['nl'] = "Als u klaar bent, klik je op \"Doorgaan\".";
 SLADi18n['continue'] = {};
 SLADi18n['continue']['fr'] = "Continuer";
 SLADi18n['continue']['en'] = "Continue";
@@ -75,14 +81,21 @@ SLADi18n['continue']['nl'] = "Doorgaan";
 function _make_sound_level_adjustment(sound_file, after_cb)
 {
     // The global LANG has to be defined
+
+    var eLANG = LANG;
+    // Fallback to English if lanugage is not supported
+    if(typeof SLADi18n['intro'][eLANG] === 'undefined'){
+        eLANG = 'en';
+    }
+
     var snd;
     var dialog = $(
         "<div class='ui modal' id='sound_adjustment' style='max-width: 20em;'>"+
             "<div class='header'>"+
-                SLADi18n['title'][LANG]+
+                SLADi18n['title'][eLANG]+
             "</div>"+
             "<div class='content'>"+
-                "<p>"+SLADi18n['intro'][LANG]+"</p>"+
+                "<p>"+SLADi18n['intro'][eLANG]+"</p>"+
                 "<p style='text-align: center;'>"+
                     "<button class='ui huge icon button' id='play-pause'>"+
                         "<i class='asterisk loading icon'></i>"+
@@ -92,7 +105,7 @@ function _make_sound_level_adjustment(sound_file, after_cb)
             "<div class='actions'>"+
                 "<button class='ui right labeled icon disabled ok button'>"+
                     "<i class='right arrow icon'></i>"+
-                    SLADi18n['continue'][LANG]+
+                    SLADi18n['continue'][eLANG]+
                 "</button>"+
             "</div>"+
         "</div>").appendTo("body");
@@ -116,17 +129,24 @@ function _make_sound_level_adjustment(sound_file, after_cb)
         snd.autoplay = false;
         snd.volume = 1;
 
+        snd.canplaythrough_1st = true;
+
         snd.addEventListener("canplaythrough", function(){
-            $('#play-pause i.icon').removeClass('asterisk loading').addClass("play");
-            $('#sound_adjustment').find(".ok.button").removeClass('disabled');
-            $('#play-pause').click(function() {
-                if($(this).children("i.icon").hasClass("play"))
-                    snd.play();
-                else
-                    snd.pause();
-                $(this).children("i.icon").toggleClass("play pause");
-            });
+            if(this.canplaythrough_1st){
+                $('#play-pause i.icon').removeClass('asterisk loading').addClass("play");
+                $('#sound_adjustment').find(".ok.button").removeClass('disabled');
+                $('#play-pause').click(function() {
+                    if($(this).children("i.icon").hasClass("play"))
+                        snd.play();
+                    else
+                        snd.pause();
+                    $(this).children("i.icon").toggleClass("play pause");
+                });
+                this.canplaythrough_1st = false;
+            }
         });
+
+        snd.load();
     }
 
     if(typeof sound_file === 'string' || sound_file instanceof String)

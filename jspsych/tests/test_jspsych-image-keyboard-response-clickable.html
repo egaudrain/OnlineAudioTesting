@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test for jspsych-html-keyboard-response-clickable</title>
+    <script src="https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/jspsych.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/css/jspsych.css" rel="stylesheet" type="text/css">
+    <script src="../plugins/jspsych-image-keyboard-response-clickable.js"></script>
+    <style>
+        .clickable {
+            font-size: 90%;
+            color: rgb(103,161,208);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+    document.addEventListener('DOMContentLoaded', function(event) {
+
+        var test_trial1 = {
+            type: 'image-keyboard-response',
+            choices: [32],
+            stimulus_height: 500,
+            prompt: '<p>1</p><p class="clickable">(Click here)</p>',
+            stimulus: 'img/test.png',
+            on_finish: function(){
+                console.log("Trial is finished.");
+            }
+        };
+
+        var test_trial2 = {
+            type: 'image-keyboard-response-clickable',
+            choices: [32],
+            stimulus_height: 500,
+            prompt: '<p>2</p><p class="clickable">(Click here)</p>',
+            stimulus: 'img/test.png',
+            on_finish: function(){
+                console.log("Trial is finished.");
+            }
+        };
+
+        jsPsych.init({
+            timeline: [test_trial1, test_trial2]
+        });
+
+    });
+    </script>
+</body>
+
+</html>

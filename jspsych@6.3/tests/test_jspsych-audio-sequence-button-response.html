@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test for jspsych-html-keyboard-response-clickable</title>
+    <script src="https://cdn.jsdelivr.net/gh/jquery/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/jspsych.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/plugins/jspsych-html-button-response.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/css/jspsych.css" rel="stylesheet" type="text/css">
+    <script src="../plugins/jspsych-audio-sequence-button-response.js"></script>
+    <style>
+        .jspsych-audio-sequence-button-response button {
+            min-width: 5em;
+            min-height: 4em;
+        }
+        .jspsych-audio-sequence-button-response button.highlighted {
+            background-color: #ffff00 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+    document.addEventListener('DOMContentLoaded', function(event) {
+
+        var timeline = [];
+
+        timeline.push({
+            type: 'html-button-response',
+            choices: ['start'],
+            stimulus: ""
+        });
+
+        timeline.push({
+            type: 'audio-sequence-button-response',
+            choices: ['&nbsp;', '&nbsp;', '&nbsp;'],
+            prompt: '<p>Prompt</p>',
+            stimuli: ['res/eg-syllables-bi01.wav', 'res/eg-syllables-bu01.wav', 'res/eg-syllables-di01.wav'],
+            trial_ends_after_audio: true,
+            on_finish: function(){
+                console.log("Trial is finished.");
+            }
+        });
+
+        timeline.push({
+            type: 'audio-sequence-button-response',
+            choices: ['&nbsp;', '&nbsp;', '&nbsp;'],
+            prompt: '<p>Prompt</p>',
+            stimuli: ['res/eg-syllables-bi01.wav', 'res/eg-syllables-bu01.wav', 'res/eg-syllables-di01.wav'],
+            trial_ends_after_audio: true,
+            on_finish: function(){
+                console.log("Trial is finished.");
+            }
+        });
+
+        jsPsych.init({
+            timeline: timeline
+        });
+
+    });
+    </script>
+</body>
+
+</html>

@@ -5,6 +5,8 @@
  * Plugin for playing a sequence of audio files and getting an HTML button response
  *
  * Based on jspsych-audio-button-response.
+ *
+ * 2022-03-19: Fixed bug that ISI was applied also to last item.
  **/
 
 jsPsych.plugins["audio-sequence-button-response"] = (function() {
@@ -142,7 +144,11 @@ jsPsych.plugins["audio-sequence-button-response"] = (function() {
                 }
                 audio.addEventListener('ended', function _audio_ended(){
                     $(display_element).find('.jspsych-audio-sequence-button-response button.highlighted').removeClass('highlighted');
-                    setTimeout(play_next_audio, trial.isi);
+                    if(play_next_audio.i<trial.stimuli.length){
+                        setTimeout(play_next_audio, trial.isi);
+                    } else {
+                        setTimeout(play_next_audio, 0);
+                    }
                     audio.removeEventListener('ended', _audio_ended);
                 });
 

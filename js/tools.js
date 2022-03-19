@@ -351,6 +351,20 @@ if(!Array.range) {
     console.warn("Array.range already exists! Its definition may not correspond to what was intended.");
 }
 
+if(!Array.linspace) {
+    Array.linspace = function(start, end, n){
+        var a = [];
+        var step = (end-start)/n;
+        for(var i=0; i<n; i++){
+            a.push(start+step*i);
+        }
+        return a;
+    };
+} else {
+    console.warn("Array.range already exists! Its definition may not correspond to what was intended.");
+}
+
+
 if(!Array.prototype.keys){
     Array.prototype.keys = function() {
         // Not an iterator, but good enough
